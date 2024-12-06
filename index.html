@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Currency Converter</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+
+        h3 {
+            margin-bottom: 20px;
+        }
+
+        .converter {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .rate-label {
+            font-size: 14px;
+            color: #555;
+        }
+
+        input, select {
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .output {
+            padding: 10px;
+            font-size: 16px;
+            font-weight: bold;
+            text-align: center;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+            min-width: 100px;
+        }
+
+        .currency-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .currency-output {
+            text-align: center;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+<h3>Введите сумму:</h3>
+<div class="converter">
+    <div class="input-group">
+        <input type="number" id="amount" placeholder="0" />
+        <select id="currency">
+            <option value="KZT">KZT</option>
+            <option value="USD">USD</option>
+            <option value="EUR">EUR</option>
+        </select>
+    </div>
+
+    <div class="currency-container">
+        <div class="rate-label" id="label-kzt">KZT</div>
+        <div class="output" id="output-kzt">-</div>
+    </div>
+
+    <div class="currency-container">
+        <div class="rate-label" id="label-usd">USD</div>
+        <div class="output" id="output-usd">-</div>
+    </div>
+
+    <div class="currency-container">
+        <div class="rate-label" id="label-eur">EUR</div>
+        <div class="output" id="output-eur">-</div>
+    </div>
+</div>
+
+<script>
+    const rates = {
+        USD: { buy: 429, sell: 431 },
+        EUR: { buy: 507, sell: 509 },
+    };
+
+    const amountInput = document.getElementById("amount");
+    const currencySelect = document.getElementById("currency");
+    const outputKZT = document.getElementById("output-kzt");
+    const outputUSD = document.getElementById("output-usd");
+    const outputEUR = document.getElementById("output-eur");
+    const labelKZT = document.getElementById("label-kzt");
+    const labelUSD = document.getElementById("label-usd");
+    const labelEUR = document.getElementById("label-eur");
+
+    function updateConversion() {
+        const amount = parseFloat(amountInput.value) || 0;
+        const selectedCurrency = currencySelect.value;
+
+        let kzt = 0;
+        let usd = "-";
+        let eur = "-";
+
+        if (selectedCurrency === "KZT") {
+            kzt = amount;
+            usd = (amount / rates.USD.sell).toFixed(2);
+            eur = (amount / rates.EUR.sell).toFixed(2);
+        } else if (selectedCurrency === "USD") {
+            kzt = (amount * rates.USD.buy).toFixed(2);
+            eur = ((amount * rates.USD.buy) / rates.EUR.sell).toFixed(2);
+        } else if (selectedCurrency === "EUR") {
+            kzt = (amount * rates.EUR.buy).toFixed(2);
+            usd = ((amount * rates.EUR.buy) / rates.USD.sell).toFixed(2);
+        }
+
+        outputKZT.textContent = kzt;
+        outputUSD.textContent = usd;
+        outputEUR.textContent = eur;
+
+        // Обновление информации о курсах
+        labelKZT.textContent = `KZT`;
+        labelUSD.textContent = `USD (Buy: ${rates.USD.buy}, Sell: ${rates.USD.sell})`;
+        labelEUR.textContent = `EUR (Buy: ${rates.EUR.buy}, Sell: ${rates.EUR.sell})`;
+    }
+
+    amountInput.addEventListener("input", updateConversion);
+    currencySelect.addEventListener("change", updateConversion);
+
+    // Инициализация значений
+    updateConversion();
+</script>
+</body>
+</html>
